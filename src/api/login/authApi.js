@@ -35,16 +35,3 @@ export const login = async (email, password) => {
   }
 };
 
-export const logoutApi = async () => {
-  // Si vous avez un endpoint pour la déconnexion, assurez-vous qu'il est correct
-  const response = await fetch('/api/logout', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Erreur lors de la déconnexion');
-  }
-};

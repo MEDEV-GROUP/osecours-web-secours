@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
-import useRequireAuth from '../hooks/useRequireAuth';
 
 const DashboardPage = () => {
-  useRequireAuth();
   return (
     <div className="bg-gray-100 flex h-full">
       {/* Main Content Section */}

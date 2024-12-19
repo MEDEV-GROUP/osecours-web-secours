@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation, Outlet } from "react-router-dom";
-// Import de ProtectedRoute supprimé
-// import ProtectedRoute from '../../context/ProtectedRoute';
 import Sidebar from "./Sidebar";
 import ToggleButton from "./togglebutton";
 import CustomBreadcrumb from "../Breadcrumb";
 
 const Layout = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -19,15 +18,18 @@ const Layout = () => {
         setIsMobileSidebarOpen(false);
       }
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const location = useLocation();
-  const isLoginPage = location.pathname === "/login";
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setIsSidebarCollapsed(true);
+    }
+  }, [location]);
+
+  const isLoginPage = location.pathname === "/";
 
   return (
     <div className={`flex h-screen ${isLoginPage ? "login-page" : "app-layout"}`}>
@@ -38,6 +40,7 @@ const Layout = () => {
             isMobile={isMobile}
             setMobileMenuOpen={setIsMobileSidebarOpen}
             isMobileOpen={isMobileSidebarOpen}
+            onMenuItemClick={() => setIsSidebarCollapsed(true)}
           />
           {isMobile && isMobileSidebarOpen && (
             <div
@@ -66,22 +69,27 @@ const Layout = () => {
               isCollapsed={isSidebarCollapsed}
               onToggle={() =>
                 isMobile
-                  ? setIsMobileSidebarOpen((prev) => !prev)
-                  : setIsSidebarCollapsed((prev) => !prev)
+                  ? setIsMobileSidebarOpen(prev => !prev)
+                  : setIsSidebarCollapsed(prev => !prev)
               }
             />
-            
           </header>
         )}
 
+        {/* Intégration du fil d'Ariane */}
+        {!isLoginPage && (
+          <div className="p-4 bg-white border-b">
+            
+          </div>
+        )}
+
         <main
-          className={`${
+          className={
             isLoginPage
               ? "w-full h-[100vh] flex justify-center items-center"
-              : "bg-gray-100 p-8 h-[100vh]"
-          }`}
-        >
-          <CustomBreadcrumb />
+              : "bg-gray-100 p-8 min-h-screen"
+          }
+        ><CustomBreadcrumb />
           <Outlet />
         </main>
       </div>

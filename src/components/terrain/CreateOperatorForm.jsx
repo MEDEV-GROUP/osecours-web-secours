@@ -1,13 +1,14 @@
- import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; 
+import { useDropzone } from 'react-dropzone'; 
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { createRescueMember } from '../../api/operateur/operateurApi';
 import { getAllRescueServices } from '../../api/operateur/serviceApi';
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
-import { Terminal, CheckCircle2 } from "lucide-react";
+import { Terminal, CheckCircle2, X } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../components/ui/select"; // Ajout des imports manquants
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../components/ui/select";
 
 export default function CreateOperatorForm() {
   const navigate = useNavigate();
@@ -20,12 +21,13 @@ export default function CreateOperatorForm() {
     position: '',
     badgeNumber: '',
     rescueServiceId: '',
+    photo: null, // On peut garder "photo" comme nom de variable interne
   });
 
   const [alertMessage, setAlertMessage] = useState('');
-  const [alertType, setAlertType] = useState(''); // "success" ou "error"
+  const [alertType, setAlertType] = useState(''); 
   const [rescueServices, setRescueServices] = useState([]);
-  const [errors, setErrors] = useState({}); // Pour stocker les messages d'erreur
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchRescueServices = async () => {
@@ -36,19 +38,20 @@ export default function CreateOperatorForm() {
         console.error('Erreur lors de la récupération des services de secours :', error);
       }
     };
-
     fetchRescueServices();
   }, []);
 
   const handleChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
-    validateField(key, value); // Validation en temps réel
+    if (key !== 'photo') {
+      validateField(key, value);
+    }
   };
 
   const validateField = (key, value) => {
-    const phoneRegex = /^[0-9]{10}$/; // Format pour un numéro (10 chiffres)
-    const nameRegex = /^[a-zA-ZÀ-ÿ '-]+$/; // Noms avec lettres, accents, espaces et apostrophes
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Format d'email
+    const phoneRegex = /^[0-9]{10}$/;
+    const nameRegex = /^[a-zA-ZÀ-ÿ '-]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     let errorMessage = '';
 
@@ -66,8 +69,6 @@ export default function CreateOperatorForm() {
       case 'phoneNumber':
         if (!phoneRegex.test(value)) {
           errorMessage = "Le numéro doit contenir 10 chiffres.";
-        } else {
-          errorMessage = ''; // Réinitialiser l'erreur si le numéro est valide
         }
         break;
       case 'password':
@@ -94,35 +95,56 @@ export default function CreateOperatorForm() {
     validateField('phoneNumber', phoneNumber);
     validateField('password', password);
     validateField('email', email);
-
     return Object.values(errors).every(error => error === '');
   };
+
+  const onDrop = (acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      handleChange('photo', file);
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/jpeg': [],
+      'image/png': []
+    },
+    maxSize: 8 * 1024 * 1024 // 8MB max
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    const payload = {
-      email: formData.email,
-      password: formData.password,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phoneNumber: formData.phoneNumber, // Utiliser le numéro sans code pays
-      position: formData.position,
-      badgeNumber: formData.badgeNumber,
-      rescueServiceId: formData.rescueServiceId,
-    };
+    // Vérifier qu'une photo est présente si c'est obligatoire
+    if (!formData.photo) {
+      setAlertType('error');
+      setAlertMessage("La photo de profil est obligatoire.");
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('password', formData.password);
+    formDataToSend.append('firstName', formData.firstName);
+    formDataToSend.append('lastName', formData.lastName);
+    formDataToSend.append('phoneNumber', formData.phoneNumber);
+    formDataToSend.append('position', formData.position);
+    formDataToSend.append('badgeNumber', formData.badgeNumber);
+    formDataToSend.append('rescueServiceId', formData.rescueServiceId);
+
+    // Nom du champ attendu par le backend : 'img'
+    if (formData.photo) {
+      formDataToSend.append('img', formData.photo);
+    }
 
     try {
-      console.log('Données envoyées pour créer un opérateur :', payload);
-      await createRescueMember(payload);
+      await createRescueMember(formDataToSend);
       setAlertType('success');
       setAlertMessage('Opérateur créé avec succès!');
-
-      // Rediriger vers la route /operateurs après succès
       navigate('/operateurs');
-
-      // Réinitialiser le formulaire après succès
       setFormData({
         lastName: '',
         firstName: '',
@@ -131,6 +153,8 @@ export default function CreateOperatorForm() {
         password: '',
         position: '',
         badgeNumber: '',
+        rescueServiceId: '',
+        photo: null,
       });
       setErrors({});
     } catch (error) {
@@ -145,7 +169,6 @@ export default function CreateOperatorForm() {
   };
 
   const handleCancel = () => {
-    // Réinitialiser le formulaire
     setFormData({
       lastName: '',
       firstName: '',
@@ -154,10 +177,15 @@ export default function CreateOperatorForm() {
       password: '',
       position: '',
       badgeNumber: '',
+      rescueServiceId: '',
+      photo: null,
     });
     setErrors({});
-    // Rediriger vers la page des opérateurs
     navigate('/operateurs');
+  };
+
+  const removePhoto = () => {
+    handleChange('photo', null);
   };
 
   return (
@@ -183,7 +211,6 @@ export default function CreateOperatorForm() {
       <div className="grid grid-cols-2 gap-8">
         <div className="col-span-2 font-semibold text-gray-700">Informations générales</div>
 
-        {/* Colonne de gauche */}
         <div className="space-y-4">
           <div>
             <Label htmlFor="lastName">Nom</Label>
@@ -218,7 +245,6 @@ export default function CreateOperatorForm() {
           </div>
         </div>
 
-        {/* Colonne de droite */}
         <div className="space-y-4">
           <div>
             <Label htmlFor="firstName">Prénom</Label>
@@ -258,7 +284,6 @@ export default function CreateOperatorForm() {
 
         <div className="col-span-2 font-semibold text-gray-700 mt-4">Détails supplémentaires</div>
 
-        {/* Colonne de gauche (détails) */}
         <div className="space-y-4">
           <div>
             <Label htmlFor="badgeNumber">N° Badge</Label>
@@ -269,9 +294,39 @@ export default function CreateOperatorForm() {
               onChange={(e) => handleChange('badgeNumber', e.target.value)}
             />
           </div>
+          <div className='flex flex-col'>
+            <Label>Photo de profil</Label>
+            {formData.photo ? (
+              <div className="relative inline-block mt-2">
+                <img
+                  src={URL.createObjectURL(formData.photo)}
+                  alt="Aperçu"
+                  className="border w-48 h-auto"
+                />
+                <button
+                  type="button"
+                  onClick={removePhoto}
+                  className="absolute top-1 left-40 bg-white rounded-full p-1 shadow hover:bg-gray-100"
+                >
+                  <X className="w-4 h-4 text-gray-600" />
+                </button>
+              </div>
+            ) : (
+              <div 
+                {...getRootProps()} 
+                className="border-2 border-dashed border-gray-300 rounded-md p-8 text-center cursor-pointer mt-2"
+              >
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <p>Déposez l&apos;image ici...</p>
+                ) : (
+                  <p>Déposez votre image ou <span className="text-blue-600 underline">Parcourir</span><br />JPEG ou PNG uniquement • 8 Mo max.</p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Colonne de droite (détails) */}
         <div className="space-y-4">
           <div>
             <Label htmlFor="position">Position</Label>
@@ -290,7 +345,7 @@ export default function CreateOperatorForm() {
           Annuler
         </Button>
         <Button type="submit" className="bg-[#FF3333] hover:bg-red-700 text-white">
-          Valider l’inscription
+          Valider l&apos;inscription
         </Button>
       </div>
     </form>

@@ -9,12 +9,18 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const { login, isAuthenticated } = useAuth();
+  
   const location = useLocation();
   const logoutMessage = new URLSearchParams(location.search).get('logout');
 
+  // Afficher un message si logoutMessage est présent
+  if (logoutMessage) {
+    setError("Vous avez été déconnecté avec succès.");
+  }
+
   // Rediriger si déjà authentifié
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/tableau-de-bord" replace />;
   }
 
   // Validation avancée de l'email

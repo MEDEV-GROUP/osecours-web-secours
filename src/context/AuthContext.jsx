@@ -9,39 +9,30 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
-      if (token) {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        setUser(storedUser);
-      }
-    };
-    checkAuth();
+    const token = localStorage.getItem('authToken');
+    setIsAuthenticated(!!token);
+    if (token) {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      setUser(storedUser);
+    }
+    setIsLoading(false);
   }, []);
 
   const login = async (email, password) => {
     try {
       setError(null);
       setIsLoading(true);
-
       const data = await loginApi(email, password);
       const { token, email: userEmail, firstName, lastName, role } = data;
-
       localStorage.setItem('authToken', token);
-      localStorage.setItem(
-        'user',
-        JSON.stringify({ email: userEmail, firstName, lastName, role })
-      );
-
+      localStorage.setItem('user', JSON.stringify({ email: userEmail, firstName, lastName, role }));
       setIsAuthenticated(true);
       setUser({ email: userEmail, firstName, lastName, role });
-
-      navigate('/dashboard', { replace: true });
+      navigate('/tableau-de-bord', { replace: true });
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Erreur de connexion';
       setError(errorMessage);
@@ -56,9 +47,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
     setIsAuthenticated(false);
     setUser(null);
-
-    const randomString = Math.random().toString(36).substring(2);
-    navigate(`/login?logout=${randomString}`, { replace: true });
+    navigate(`/`, { replace: true });
   };
 
   return (

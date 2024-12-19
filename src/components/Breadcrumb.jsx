@@ -10,28 +10,43 @@ import { useLocation } from "react-router-dom";
 
 const CustomBreadcrumb = () => {
   const location = useLocation();
-  const pathnames = location.pathname.split("/").filter((x) => x); // Sépare le chemin en segments
+  const pathnames = location.pathname ? location.pathname.split("/").filter((x) => x) : [];
+
+  // Si nous sommes sur la page d'accueil uniquement, ne rien afficher
+  if (pathnames.length === 0) {
+    return null;
+  }
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
+        {/* Lien vers la page d'accueil */}
         <BreadcrumbItem>
-          <BreadcrumbLink className="pl-6 text-base font-bold text-black" href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="/" className="pl-6 text-base font-bold text-black">
+            Accueil
+          </BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator>{'>'}</BreadcrumbSeparator> 
+        <BreadcrumbSeparator>{'>'}</BreadcrumbSeparator>
+
         {pathnames.map((pathname, index) => {
-          const isLast = index === pathnames.length - 1;
-          const href = `/${pathnames.slice(0, index + 1).join("/")}`; // Crée le lien pour chaque segment
-          const formattedName = pathname.replace(/-/g, ' ').charAt(0).toUpperCase() + pathname.replace(/-/g, ' ').slice(1); // Remplace les "-" par des espaces et met en majuscule
+          const isLast = index === pathnames.length - 1; // Vérifie si c'est le dernier élément
+          const href = `/${pathnames.slice(0, index + 1).join("/")}`; // Génère le chemin complet jusqu'à cet élément
+          const formattedName = 
+            pathname.replace(/-/g, " ").charAt(0).toUpperCase() + 
+            pathname.replace(/-/g, " ").slice(1);
 
           return (
             <BreadcrumbItem key={href}>
               {isLast ? (
-                <BreadcrumbPage>{formattedName}</BreadcrumbPage> // Affiche le nom de la page
+                // Dernier élément : texte simple sans lien
+                <BreadcrumbPage className="font-medium">{formattedName}</BreadcrumbPage>
               ) : (
                 <>
-                  <BreadcrumbLink href={href}>{formattedName}</BreadcrumbLink> {/* Affiche le nom de la page avec lien */}
-                  <BreadcrumbSeparator>{'>'}</BreadcrumbSeparator> {/* Séparateur entre les éléments */}
+                  {/* Élément intermédiaire avec lien */}
+                  <BreadcrumbLink href={href} className="text-gray-600 hover:text-black">
+                    {formattedName}
+                  </BreadcrumbLink>
+                  <BreadcrumbSeparator>{'>'}</BreadcrumbSeparator>
                 </>
               )}
             </BreadcrumbItem>
@@ -42,4 +57,4 @@ const CustomBreadcrumb = () => {
   );
 };
 
-export default CustomBreadcrumb; 
+export default CustomBreadcrumb;

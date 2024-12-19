@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { FiSidebar } from "react-icons/fi";
 
-const ToggleButton = ({ isCollapsed, onToggle }) => {
+const ToggleButton = ({ isCollapsed , onToggle }) => {
   return (
     <div className="flex items-center justify-between p-4 bg-white-100"
     >

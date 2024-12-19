@@ -15,9 +15,9 @@ import { HiOutlineBell, HiBell } from "react-icons/hi";
 import UserProfile from "./profile";
 import Header from "./Header";
 
-const Sidebar = ({ isCollapsed, isMobile, setMobileMenuOpen, isMobileOpen }) => {
+const Sidebar = ({ isCollapsed = false, isMobile, setMobileMenuOpen, isMobileOpen, onMenuItemClick }) => {
   const menuItems = [
-    { icon: { active: <MdDashboard />, inactive: <MdOutlineDashboard /> }, label: "Tableau de bord", link: "/dashboard" },
+    { icon: { active: <MdDashboard />, inactive: <MdOutlineDashboard /> }, label: "Tableau de bord", link: "/tableau-de-bord" },
     { icon: { active: <MdMap />, inactive: <MdOutlineMap /> }, label: "Carte interactive", link: "/maps" },
     { icon: { active: <MdReport />, inactive: <MdOutlineReport /> }, label: "Reporting & Statistiques", link: "/reports" },
     { icon: { active: <HiBell />, inactive: <HiOutlineBell /> }, label: "Alertes émises", link: "/alerts" },
@@ -46,6 +46,10 @@ const Sidebar = ({ isCollapsed, isMobile, setMobileMenuOpen, isMobileOpen }) => 
                 <li key={index} className="relative group">
                   <NavLink
                     to={item.link}
+                    onClick={() => {
+                      onMenuItemClick();
+                      setMobileMenuOpen(false);
+                    }}
                     className={({ isActive }) =>
                       `flex items-center ${
                         isCollapsed ? "justify-center" : "gap-4 pl-12 py-4"
@@ -77,6 +81,7 @@ Sidebar.propTypes = {
   isMobile: PropTypes.bool.isRequired,
   setMobileMenuOpen: PropTypes.func.isRequired,
   isMobileOpen: PropTypes.bool.isRequired,
+  onMenuItemClick: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

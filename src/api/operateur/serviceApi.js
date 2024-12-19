@@ -14,7 +14,7 @@ export const getAllRescueServices = async () => {
         'Content-Type': 'application/json',
       },
     });
-    console.log('Données des services reçues :', response.data.data);
+    //console.log('Données des services reçues :', response.data.data);
     return response.data.data || []; // Fallback à un tableau vide
   } catch (error) {
     console.error('Erreur lors de la récupération des services :', error);
