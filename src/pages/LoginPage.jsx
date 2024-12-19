@@ -13,6 +13,10 @@ const LoginPage = () => {
   const location = useLocation();
   const logoutMessage = new URLSearchParams(location.search).get('logout');
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   // Afficher un message si logoutMessage est présent
   if (logoutMessage) {
     setError("Vous avez été déconnecté avec succès.");
