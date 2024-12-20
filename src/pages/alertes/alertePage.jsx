@@ -2,13 +2,22 @@ import { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { Skeleton } from "../../components/ui/skeleton";
+import { Input } from "../../components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../components/ui/select";
 import { getAllMessages } from '../../api/alertes/alerteApi';
 import { useNavigate } from 'react-router-dom';
 
 export default function AlertTable() {
   const [alerts, setAlerts] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedLevel, setSelectedLevel] = useState('all');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,11 +61,35 @@ export default function AlertTable() {
         hour: "2-digit",
         minute: "2-digit",
       };
-      return date.toLocaleDateString("fr-FR", options).replace(/(\d+) (\w+) (\d+),/, "$1 $2, $3 -");
+      return date.toLocaleDateString("en-US", options).replace(/(\d+) (\w+) (\d+),/, "$1 $2, $3 -");
     } catch (error) {
       console.error("Erreur de formatage de la date :", error);
       return "Date invalide";
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
+  // Filter alerts by exact date and level
+  const filteredAlerts = alerts.filter((alert) => {
+    const alertDate = formatDate(alert.createdAt);
+
+    if (selectedDate && alertDate !== selectedDate) return false;
+    if (selectedLevel !== "all" && alert.level !== selectedLevel) return false;
+
+    return true;
+  });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAlerts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = filteredAlerts.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
 
   if (error) {
@@ -74,6 +107,33 @@ export default function AlertTable() {
           Créer une nouvelle alerte
         </Button>
       </div>
+
+      {/* Filters */}
+      <div className="mb-6 flex justify-end items-center gap-4">
+        <span>
+          Filtre : 
+        </span>
+        <Input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          placeholder="Sélectionner une date"
+          className="w-auto"
+        />
+        <Select onValueChange={(val) => setSelectedLevel(val)}>
+          <SelectTrigger className="w-60">
+            <SelectValue placeholder="Niveau d'alerte" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous les niveaux</SelectItem>
+            <SelectItem value="Très importante">Très importante</SelectItem>
+            <SelectItem value="Importante">Importante</SelectItem>
+            <SelectItem value="Moins importante">Moins importante</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Table */}
       <div className="border rounded-xl overflow-hidden bg-white">
         <Table>
           <TableHeader className="bg-gray-100">
@@ -82,22 +142,21 @@ export default function AlertTable() {
               <TableHead className="font-bold">Nom de l&apos;alerte</TableHead>
               <TableHead className="font-bold">Détails de l&apos;alerte</TableHead>
               <TableHead className="font-bold">Niveau de l&apos;alerte</TableHead>
-              <TableHead className="font-bold">Date et heure programmées</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               Array.from({ length: 5 }).map((_, index) => (
                 <TableRow key={index}>
-                  {Array.from({ length: 5 }).map((_, cellIndex) => (
+                  {Array.from({ length: 4 }).map((_, cellIndex) => (
                     <TableCell key={cellIndex} className="h-12">
                       <Skeleton className="h-4 w-3/4 mx-auto" />
                     </TableCell>
                   ))}
                 </TableRow>
               ))
-            ) : alerts && alerts.length > 0 ? (
-              alerts.map((alert) => {
+            ) : currentItems && currentItems.length > 0 ? (
+              currentItems.map((alert) => {
                 const { textColor, bgColor } = getLevelStyle(alert.level || "");
                 return (
                   <TableRow key={alert.id}>
@@ -110,15 +169,12 @@ export default function AlertTable() {
                         <span className={textColor}>{alert.level || "Non défini"}</span>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {alert.scheduleAt ? formatDateTime(alert.scheduleAt) : "Non programmé"}
-                    </TableCell>
                   </TableRow>
                 );
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-gray-500">
+                <TableCell colSpan={4} className="text-center text-gray-500">
                   Aucune alerte disponible.
                 </TableCell>
               </TableRow>
@@ -126,6 +182,39 @@ export default function AlertTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-4 flex justify-end">
+          <div className="flex items-center gap-2">
+            <Button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="border rounded px-4 py-2"
+            >
+              Précédent
+            </Button>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <Button
+                key={index}
+                className={`border rounded px-4 py-2 ${
+                  currentPage === index + 1 ? "bg-red-500 text-white" : "bg-white text-black"
+                }`}
+                onClick={() => handlePageChange(index + 1)}
+              >
+                {String(index + 1).padStart(2, '0')}
+              </Button>
+            ))}
+            <Button
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="border rounded px-4 py-2"
+            >
+              Suivant
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
