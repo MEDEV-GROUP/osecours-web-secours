@@ -13,6 +13,10 @@ const LoginPage = () => {
   const location = useLocation();
   const logoutMessage = new URLSearchParams(location.search).get('logout');
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   // Afficher un message si logoutMessage est présent
   if (logoutMessage) {
     setError("Vous avez été déconnecté avec succès.");
@@ -124,7 +128,7 @@ const LoginPage = () => {
               src="Group.svg"
               alt="Password Icon"
               className="absolute w-5 h-5 top-3.5 right-3 text-gray-400 items-center justify-center cursor-pointer"
-              // Ajoutez une fonction pour afficher/masquer le mot de passe si nécessaire
+              onClick={togglePasswordVisibility}
             />
           </div>
         </div>
