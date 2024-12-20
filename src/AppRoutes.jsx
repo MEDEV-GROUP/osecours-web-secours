@@ -4,11 +4,13 @@ import Layout from './components/sidebar/Layout';
 import Dashboard from "./pages/DashboardPage";
 import Helpers from "./pages/terrain-secours";
 import Maps from "./pages/maps";
-import LoginPage from "./pages/LoginPage";
+import LoginPage from "./pages/login/page";
 import OperatorsPage from "./pages/Operators/OperatorsPage";
 import CreateMemberPage from "./pages/Operators/CreateOperator";
 import ProtectedRoute from './context/ProtectedRoute';
 import NotFoundPage from "./pages/NotFoundPage";
+import AlertTable from "./pages/alertes/alertePage";
+import CreateAlertePage from "./pages/alertes/createAlerte";
 
 const AppRoutes = () => {
   return (
@@ -26,6 +28,10 @@ const AppRoutes = () => {
           <Route path="operateurs">
             <Route index element={<OperatorsPage />} />
             <Route path="creer-un-nouvel-operateur" element={<CreateMemberPage />} />
+          </Route>
+          <Route path="alertes-emises">
+            <Route index element={<AlertTable />} />
+            <Route path="creer-une-alerte" element={<CreateAlertePage />} />
           </Route>
         </Route>
 

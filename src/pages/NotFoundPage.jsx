@@ -24,7 +24,7 @@ const NotFoundPage = () => {
           to="/tableau-de-bord"
           className="flex items-center px-6 py-3 bg-[#ff3333] text-white rounded-md hover:bg-[#ff3321] transition"
         >
-          <span className="mr-2">←</span> Go home
+          <span className="mr-2">←</span> Accueil
         </Link>
       </div>
     </div>

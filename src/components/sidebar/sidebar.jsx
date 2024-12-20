@@ -20,7 +20,7 @@ const Sidebar = ({ isCollapsed = false, isMobile, setMobileMenuOpen, isMobileOpe
     { icon: { active: <MdDashboard />, inactive: <MdOutlineDashboard /> }, label: "Tableau de bord", link: "/tableau-de-bord" },
     { icon: { active: <MdMap />, inactive: <MdOutlineMap /> }, label: "Carte interactive", link: "/maps" },
     { icon: { active: <MdReport />, inactive: <MdOutlineReport /> }, label: "Reporting & Statistiques", link: "/reports" },
-    { icon: { active: <HiBell />, inactive: <HiOutlineBell /> }, label: "Alertes émises", link: "/alerts" },
+    { icon: { active: <HiBell />, inactive: <HiOutlineBell /> }, label: "Alertes émises", link: "/alertes-emises" },
     { icon: { active: <AiFillMessage />, inactive: <AiOutlineMessage /> }, label: "Messages", link: "/messages" },
     { icon: { active: <MdPeople />, inactive: <MdOutlinePeople /> }, label: "Nos Opérateurs Terrains", link: "/operateurs" },
   ];

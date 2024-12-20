@@ -368,9 +368,9 @@ const OperatorsPage = () => {
       <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Détails de l'opérateur</DialogTitle>
+            <DialogTitle>Détails de l&apos;opérateur</DialogTitle>
             <DialogDescription>
-              Consultez les informations détaillées de l'opérateur.
+              Consultez les informations détaillées de l&apos;opérateur.
             </DialogDescription>
           </DialogHeader>
           {operatorToView && (

@@ -1,12 +1,22 @@
 {
-  "files": [],
-  "references": [],
   "compilerOptions": {
-    "baseUrl": ".",
+    "target": "ES6",                       // Définit le niveau cible de JavaScript
+    "module": "ESNext",                   // Utilise les modules ES6
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Inclut les bibliothèques nécessaires pour React et le DOM
+    "jsx": "react-jsx",                   // Prise en charge de JSX (React 17+)
+    "strict": true,                       // Active les vérifications strictes de TypeScript
+    "moduleResolution": "node",          // Utilisation des modules Node.js
+    "baseUrl": ".",                       // Définit la racine pour les alias
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@alias/*": ["./src/alias/*"]
-    }
-  }
-} 
+    },
+    "esModuleInterop": true,              // Meilleure compatibilité avec les modules CommonJS
+    "skipLibCheck": true,                 // Ignore la vérification des types dans les fichiers de bibliothèque
+    "forceConsistentCasingInFileNames": true // Respecte la casse des noms de fichiers
+  },
+  "include": ["src"],                     // Définit les fichiers inclus dans la compilation
+  "exclude": ["node_modules", "dist"],   // Exclut les répertoires inutiles
+  "references": []                        // Peut être rempli si vous utilisez des projets monorepo ou multi-projets
+}

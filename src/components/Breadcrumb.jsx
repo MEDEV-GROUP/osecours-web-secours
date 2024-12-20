@@ -22,7 +22,7 @@ const CustomBreadcrumb = () => {
       <BreadcrumbList>
         {/* Lien vers la page d'accueil */}
         <BreadcrumbItem>
-          <BreadcrumbLink href="/" className="pl-6 text-base font-bold text-black">
+          <BreadcrumbLink href="#" className="pl-6 text-base font-bold text-black">
             Accueil
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -58,3 +58,5 @@ const CustomBreadcrumb = () => {
 };
 
 export default CustomBreadcrumb;
+
+

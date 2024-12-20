@@ -8,7 +8,8 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // Erreur générale
+  const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' }); // Erreurs spécifiques aux champs
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setError(null);
+      setFieldErrors({ email: '', password: '' });
       setIsLoading(true);
       const data = await loginApi(email, password);
       const { token, email: userEmail, firstName, lastName, role } = data;
@@ -35,8 +37,19 @@ export const AuthProvider = ({ children }) => {
       navigate('/tableau-de-bord', { replace: true });
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Erreur de connexion';
-      setError(errorMessage);
       console.error('Erreur lors de la connexion :', errorMessage);
+
+      // Réinitialiser les erreurs spécifiques aux champs
+      setFieldErrors({ email: '', password: '' });
+
+      // Déterminer quelle erreur est survenue
+      if (errorMessage.toLowerCase().includes('email')) {
+        setFieldErrors(prev => ({ ...prev, email: errorMessage }));
+      } else if (errorMessage.toLowerCase().includes('mot de passe')) {
+        setFieldErrors(prev => ({ ...prev, password: errorMessage }));
+      } else {
+        setError(errorMessage); // Erreur générale
+      }
     } finally {
       setIsLoading(false);
     }
@@ -58,6 +71,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         error,
+        fieldErrors,
         isLoading,
       }}
     >
