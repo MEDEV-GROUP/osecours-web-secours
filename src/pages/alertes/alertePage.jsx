@@ -138,10 +138,10 @@ export default function AlertTable() {
         <Table>
           <TableHeader className="bg-gray-100">
             <TableRow>
-              <TableHead className="font-bold">Date</TableHead>
-              <TableHead className="font-bold">Nom de l&apos;alerte</TableHead>
-              <TableHead className="font-bold">Détails de l&apos;alerte</TableHead>
-              <TableHead className="font-bold">Niveau de l&apos;alerte</TableHead>
+              <TableHead className="font-bold text-black">Date</TableHead>
+              <TableHead className="font-bold text-black">Nom de l&apos;alerte</TableHead>
+              <TableHead className="font-bold text-black">Détails de l&apos;alerte</TableHead>
+              <TableHead className="font-bold text-black">Niveau de l&apos;alerte</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
