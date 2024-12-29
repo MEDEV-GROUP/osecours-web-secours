@@ -2,7 +2,9 @@ import logo from '../../assets/sidebar/logo.svg';
 import logo2 from '../../assets/sidebar/logo-2.svg';
 
 
-const Header = ({ isCollapsed, onToggle }) => {
+import PropTypes from 'prop-types';
+
+const Header = ({ isCollapsed }) => {
   return (
     <div className="flex justify-center rounded-lg shadow-sm">
       {/* Logo conditionnel */}
@@ -23,6 +25,10 @@ const Header = ({ isCollapsed, onToggle }) => {
       </div>
     </div>
   );
+};
+
+Header.propTypes = {
+  isCollapsed: PropTypes.bool.isRequired,
 };
 
 export default Header;

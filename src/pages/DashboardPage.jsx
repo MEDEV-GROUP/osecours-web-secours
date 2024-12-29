@@ -7,6 +7,7 @@ const DashboardPage = () => {
 
   return (
     <div className="p-6">
+      {/* Votre composant d’incidents avec le filtre en prop */}
       <div className="flex justify-between items-center mb-1">
         <h1 className="text-3xl font-bold mb-6">Total d&apos;alertes reçues</h1>
         <div>
@@ -46,11 +47,11 @@ const DashboardPage = () => {
           </div>
         </div>
       </div>
+      <IncidentDashboard filter={filter} />
+      
 
       {/* Filtres sous forme de texte "Jour / Semaine / Mois" */}
 
-      {/* Votre composant d’incidents avec le filtre en prop */}
-      <IncidentDashboard filter={filter} />
       <div className="mt-6">
         <CommuneSinistreChart />
       </div>

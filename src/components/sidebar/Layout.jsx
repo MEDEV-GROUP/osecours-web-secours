@@ -78,7 +78,7 @@ const Layout = () => {
 
         {/* Intégration du fil d'Ariane */}
         {!isLoginPage && (
-          <div className="p-4 bg-white border-b">
+          <div className=" bg-white border-b">
             
           </div>
         )}
@@ -87,7 +87,7 @@ const Layout = () => {
           className={
             isLoginPage
               ? "w-full h-[100vh] flex justify-center items-center"
-              : "bg-gray-100 p-8 min-h-screen"
+              : "bg-gray-100 p-8 "
           }
         ><CustomBreadcrumb />
           <Outlet />

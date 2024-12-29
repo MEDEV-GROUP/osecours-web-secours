@@ -1,9 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
-import { Button } from "../../components/ui/button";
-import { Skeleton } from "../../components/ui/skeleton";
-import { Input } from "../../components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '../../components/ui/table';
+import { Button } from '../../components/ui/button';
+import { Skeleton } from '../../components/ui/skeleton';
+import { Input } from '../../components/ui/input';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '../../components/ui/select';
 import { getAllMessages } from '../../api/alertes/alerteApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +26,9 @@ export default function AlertTable() {
   const [selectedLevel, setSelectedLevel] = useState('all');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Alerte sélectionnée pour l'affichage détaillé (pop-up)
+  const [selectedAlert, setSelectedAlert] = useState(null);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,6 +52,13 @@ export default function AlertTable() {
 
     fetchAlerts();
   }, []);
+
+  // Fonction utilitaire pour limiter le texte à 40 caractères
+  function limitContent(content, maxChars = 40) {
+    if (!content) return "";
+    if (content.length <= maxChars) return content;
+    return content.substring(0, maxChars) + "...";
+  }
 
   const getLevelStyle = (level) => {
     switch (level) {
@@ -61,7 +84,10 @@ export default function AlertTable() {
         hour: "2-digit",
         minute: "2-digit",
       };
-      return date.toLocaleDateString("en-US", options).replace(/(\d+) (\w+) (\d+),/, "$1 $2, $3 -");
+      // Format : Dec 23, 2024 - 10:28
+      return date
+        .toLocaleDateString("en-US", options)
+        .replace(/(\d+) (\w+) (\d+),/, "$1 $2, $3 -");
     } catch (error) {
       console.error("Erreur de formatage de la date :", error);
       return "Date invalide";
@@ -73,23 +99,31 @@ export default function AlertTable() {
     return date.toISOString().split('T')[0];
   };
 
-  // Filter alerts by exact date and level
+  // Filtre par date et par niveau
   const filteredAlerts = alerts.filter((alert) => {
     const alertDate = formatDate(alert.createdAt);
-
     if (selectedDate && alertDate !== selectedDate) return false;
     if (selectedLevel !== "all" && alert.level !== selectedLevel) return false;
-
     return true;
   });
 
-  // Pagination logic
+  // Pagination
   const totalPages = Math.ceil(filteredAlerts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = filteredAlerts.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+  };
+
+  // Gérer l'ouverture de la pop-up
+  const openAlertDetails = (alert) => {
+    setSelectedAlert(alert);
+  };
+
+  // Gérer la fermeture de la pop-up
+  const closeAlertDetails = () => {
+    setSelectedAlert(null);
   };
 
   if (error) {
@@ -108,11 +142,9 @@ export default function AlertTable() {
         </Button>
       </div>
 
-      {/* Filters */}
+      {/* Filtres */}
       <div className="mb-6 flex justify-end items-center gap-4">
-        <span>
-          Filtre : 
-        </span>
+        <span>Filtre :</span>
         <Input
           type="date"
           value={selectedDate}
@@ -133,7 +165,7 @@ export default function AlertTable() {
         </Select>
       </div>
 
-      {/* Table */}
+      {/* Tableau */}
       <div className="border rounded-xl overflow-hidden bg-white">
         <Table>
           <TableHeader className="bg-gray-100">
@@ -159,10 +191,14 @@ export default function AlertTable() {
               currentItems.map((alert) => {
                 const { textColor, bgColor } = getLevelStyle(alert.level || "");
                 return (
-                  <TableRow key={alert.id}>
+                  <TableRow
+                    key={alert.id}
+                    onClick={() => openAlertDetails(alert)}
+                    className="cursor-pointer"
+                  >
                     <TableCell>{formatDateTime(alert.createdAt)}</TableCell>
                     <TableCell>{alert.title}</TableCell>
-                    <TableCell>{alert.content}</TableCell>
+                    <TableCell>{limitContent(alert.content, 40)}</TableCell>
                     <TableCell>
                       <div className="flex items-center">
                         <div className={`w-4 h-4 rounded-full mr-2 ${bgColor}`}></div>
@@ -212,6 +248,44 @@ export default function AlertTable() {
             >
               Suivant
             </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Pop-up pour afficher le contenu complet de l’alerte */}
+      {selectedAlert && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-xl max-w-xl w-full">
+            <h2 className="text-xl font-bold mb-4">Détails de l&apos;alerte</h2>
+            
+            <p className="mb-2">
+              <strong>Titre de l&apos;alerte : </strong>
+              {selectedAlert.title}
+            </p>
+
+            <p className="mb-2">
+              <strong>Niveau de l&apos;alerte : </strong>
+              {selectedAlert.level || "Non défini"}
+            </p>
+
+            <p className="mb-2">
+              <strong>Date et heure d&apos;envoi : </strong>
+              {formatDateTime(selectedAlert.createdAt)}
+            </p>
+
+            <p className="mb-4 whitespace-pre-wrap">
+              <strong>Contenu : </strong>
+              {selectedAlert.content}
+            </p>
+
+            <div className="flex justify-end">
+              <Button
+                onClick={closeAlertDetails}
+                className="bg-gray-600 hover:bg-gray-800 text-white"
+              >
+                Fermer
+              </Button>
+            </div>
           </div>
         </div>
       )}
