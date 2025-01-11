@@ -1,8 +1,41 @@
-# React + Vite
+# O'Secours - Front-End 🚨
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Bienvenue dans le dépôt du front-end d'O'Secours, une solution innovante pour signaler et gérer les numéros de spam adaptés aux réalités locales.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Technologies utilisées
+
+- **Framework Front-End** : [Vite.js](https://vitejs.dev/)  
+- **UI Library** : React.js  
+- **Animations** : Framer Motion  
+- **Gestion d'état** : Redux  
+- **Monitoring** : [Sentry](https://sentry.io/)
+
+---
+
+## 📥 Prérequis
+
+Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine :  
+
+- **Node.js** (v16.x ou plus récent) : [Télécharger Node.js](https://nodejs.org/)  
+- **Git** : [Télécharger Git](https://git-scm.com/)  
+- Un gestionnaire de packages comme **npm** (fourni avec Node.js) ou **yarn**.
+
+---
+
+## 🚀 Installation et configuration
+
+1. **Clonez le dépôt**  
+   ```bash
+   git clone https://github.com/<votre-utilisateur>/osecours-frontend.git
+   cd osecours-frontend
+## Installez les dépendances
+
+**  Utilisez npm ou yarn : **  
+
+# Avec npm
+npm install
+
+# Avec yarn
+yarn install
