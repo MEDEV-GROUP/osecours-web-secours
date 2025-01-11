@@ -34,8 +34,18 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
 **  Utilisez npm ou yarn : **  
 
-# Avec npm
-npm install
+- Avec npm
+   npm install
 
-# Avec yarn
-yarn install
+- Avec yarn
+   yarn install
+
+## 🏃‍♂️ Lancement du projet
+
+1. **En mode développement**
+    Lancer le serveur de développement avec :
+- Avec npm
+npm run dev
+
+- Avec yarn
+yarn dev
