@@ -32,20 +32,20 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
    cd osecours-frontend
 ## Installez les dépendances
 
-**  Utilisez npm ou yarn : **  
+Utilisez npm ou yarn :
 
 - Avec npm
-   npm install
+npm install
 
 - Avec yarn
-   yarn install
+yarn install
 
 ## 🏃‍♂️ Lancement du projet
 
 1. **En mode développement**
-    Lancer le serveur de développement avec :
+Lancer le serveur de développement avec :
 - Avec npm
-npm run dev
+  1. npm run dev
 
 - Avec yarn
-yarn dev
+  1. yarn dev
