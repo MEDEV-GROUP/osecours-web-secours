@@ -8,7 +8,7 @@ const DashboardPage = () => {
   return (
     <div className="p-6">
       {/* Votre composant d’incidents avec le filtre en prop */}
-      <div className="flex justify-between items-center mb-1">
+      <div className="flex justify-between items-center mb-1 ">
         <h1 className="text-3xl font-bold mb-6">Total d&apos;alertes reçues</h1>
         <div>
           <div className="flex items-center text-base space-x-1">
