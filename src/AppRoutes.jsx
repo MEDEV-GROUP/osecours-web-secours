@@ -1,4 +1,5 @@
 // src/AppRoutes.jsx
+// src/AppRoutes.jsx
 import { Routes, Route } from "react-router-dom";
 import Layout from './components/sidebar/Layout';
 import Dashboard from "./pages/DashboardPage";
@@ -11,6 +12,7 @@ import ProtectedRoute from './context/ProtectedRoute';
 import NotFoundPage from "./pages/NotFoundPage";
 import AlertTable from "./pages/alertes/alertePage";
 import CreateAlertePage from "./pages/alertes/createAlerte";
+import FollowTeamMap from "./components/FollowTeamMap"; 
 
 const AppRoutes = () => {
   return (
@@ -25,6 +27,8 @@ const AppRoutes = () => {
           <Route path="tableau-de-bord" element={<Dashboard />} />
           <Route path="secours-terrain" element={<Helpers />} />
           <Route path="maps" element={<Maps />} />
+           {/* Nouvelle page de suivi : /follow-team/:alertId */}
+          <Route path="/maps/follow-team/:alertId" element={<FollowTeamMap />} />
           <Route path="operateurs">
             <Route index element={<OperatorsPage />} />
             <Route path="creer-un-nouvel-operateur" element={<CreateMemberPage />} />
