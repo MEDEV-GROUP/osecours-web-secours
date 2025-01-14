@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import Sidebar from "./sidebar";
 import ToggleButton from "./togglebutton";
 import CustomBreadcrumb from "../Breadcrumb";
 
