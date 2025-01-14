@@ -4,7 +4,11 @@ import Sidebar from "./Sidebar";
 import ToggleButton from "./togglebutton";
 import CustomBreadcrumb from "../Breadcrumb";
 
-
+const Layout = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleResize = () => {
