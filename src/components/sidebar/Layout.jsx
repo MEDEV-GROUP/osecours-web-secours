@@ -5,7 +5,7 @@ import ToggleButton from "./togglebutton";
 import CustomBreadcrumb from "../Breadcrumb";
 
 const Layout = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const location = useLocation();
@@ -18,8 +18,10 @@ const Layout = () => {
         setIsMobileSidebarOpen(false);
       }
     };
+
     handleResize();
     window.addEventListener("resize", handleResize);
+
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -29,7 +31,9 @@ const Layout = () => {
     }
   }, [location]);
 
-  const isLoginPage = location.pathname === "/";
+  const isLoginPage = location.pathname === "/login";
+  const isMapPage = location.pathname === "/maps"; // Vérifiez si c'est la page de la carte
+  const isFollowMapPage = location.pathname.startsWith("/maps/follow-team/"); // Vérifiez si c'est la page de la carte
 
   return (
     <div className={`flex h-screen ${isLoginPage ? "login-page" : "app-layout"}`}>
@@ -63,33 +67,30 @@ const Layout = () => {
             : "20rem",
         }}
       >
-        {!isLoginPage && (
+        {/* Exclusion du ToggleButton uniquement sur la page de la carte */}
+        {!isLoginPage && !isMapPage && !isFollowMapPage &&(
           <header className="p-4 bg-white shadow-md">
             <ToggleButton
               isCollapsed={isSidebarCollapsed}
               onToggle={() =>
                 isMobile
-                  ? setIsMobileSidebarOpen(prev => !prev)
-                  : setIsSidebarCollapsed(prev => !prev)
+                  ? setIsMobileSidebarOpen((prev) => !prev)
+                  : setIsSidebarCollapsed((prev) => !prev)
               }
             />
           </header>
         )}
 
-        {/* Intégration du fil d'Ariane */}
-        {!isLoginPage && (
-          <div className=" bg-white border-b">
-            
-          </div>
-        )}
+
 
         <main
-          className={
+          className={`${
             isLoginPage
-              ? "w-full h-screen flex justify-center items-center"
-              : "bg-gray-100 p-8 h-screen"
-          }
-        ><CustomBreadcrumb />
+              ? "w-full h-[100vh] flex justify-center items-center"
+              : "bg-gray-100 p-8 h-[100vh]"
+          }`}
+        >
+          {!isMapPage && !isFollowMapPage &&<CustomBreadcrumb />}
           <Outlet />
         </main>
       </div>
