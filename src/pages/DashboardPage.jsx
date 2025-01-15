@@ -1,6 +1,7 @@
 import { useState } from "react";
 import IncidentDashboard from "../components/dashboard/incidentCard";
 import CommuneSinistreChart from "../components/dashboard/CommuneSinistreChart;";
+import AlertCard from "../components/dashboard/lastAlert";
 
 const DashboardPage = () => {
   const [filter, setFilter] = useState("jour");
@@ -48,12 +49,14 @@ const DashboardPage = () => {
         </div>
       </div>
       <IncidentDashboard filter={filter} />
-      
 
       {/* Filtres sous forme de texte "Jour / Semaine / Mois" */}
 
-      <div className="mt-6">
+      <div className="flex justify-between items-center gap-2 mt-6">
         <CommuneSinistreChart />
+        
+          <AlertCard />
+        
       </div>
     </div>
   );
