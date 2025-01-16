@@ -74,7 +74,7 @@ L.Marker.prototype.options.icon = defaultIcon;
 const MemberSelectionPopup = ({ members, selectedMember, onSelect, onSend, alertId, isLoading, isLoadingMembers }) => (
   <div className="p-5 w-[1000px] max-w-full">
     <h3 className="text-lg font-bold mb-4">Sélectionner une équipe de secours</h3>
-    
+
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
@@ -88,16 +88,15 @@ const MemberSelectionPopup = ({ members, selectedMember, onSelect, onSend, alert
         </thead>
         <tbody>
           {members.map((member) => (
-            <tr 
+            <tr
               key={member.id}
-              className={`border-b cursor-pointer hover:bg-gray-50 ${
-                selectedMember?.id === member.id ? 'bg-gray-100' : ''
-              }`}
+              className={`border-b cursor-pointer hover:bg-gray-50 ${selectedMember?.id === member.id ? 'bg-gray-100' : ''
+                }`}
               onClick={() => onSelect(member)}
             >
               <td className="p-3">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={selectedMember?.id === member.id}
                   readOnly
                 />
@@ -126,8 +125,8 @@ const MemberSelectionPopup = ({ members, selectedMember, onSelect, onSend, alert
     >
       {isLoading ? (
         <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
       ) : "Envoyer l'équipe sélectionnée"}
     </button>
@@ -137,22 +136,22 @@ const MemberSelectionPopup = ({ members, selectedMember, onSelect, onSend, alert
 // Fonction pour calculer les bounds
 const getBounds = (alerts) => {
   if (!alerts || alerts.length === 0) return null;
-  
+
   let minLat = alerts[0].lat;
   let maxLat = alerts[0].lat;
   let minLon = alerts[0].lon;
   let maxLon = alerts[0].lon;
-  
+
   alerts.forEach(alert => {
     minLat = Math.min(minLat, alert.lat);
     maxLat = Math.max(maxLat, alert.lat);
     minLon = Math.min(minLon, alert.lon);
     maxLon = Math.max(maxLon, alert.lon);
   });
-  
+
   const latMargin = (maxLat - minLat) * 0.1;
   const lonMargin = (maxLon - minLon) * 0.1;
-  
+
   return [
     [minLat - latMargin, minLon - lonMargin],
     [maxLat + latMargin, maxLon + lonMargin]
@@ -162,7 +161,7 @@ const getBounds = (alerts) => {
 // Composant pour recentrer la carte
 const RecenterMap = ({ center, zoom, bounds }) => {
   const map = useMap();
-  
+
   useEffect(() => {
     if (bounds) {
       map.fitBounds(bounds);
@@ -172,7 +171,7 @@ const RecenterMap = ({ center, zoom, bounds }) => {
       map.setView(center, map.getZoom());
     }
   }, [center, zoom, bounds, map]);
-  
+
   return null;
 };
 
@@ -184,7 +183,7 @@ const Legend = ({ filters, setFilters }) => (
         <input
           type="checkbox"
           checked={filters.Last24Hours}
-          onChange={() => setFilters(prev => ({...prev, Last24Hours: !prev.Last24Hours}))}
+          onChange={() => setFilters(prev => ({ ...prev, Last24Hours: !prev.Last24Hours }))}
           className="mr-2"
         />
         <div className="flex items-center">
@@ -218,7 +217,7 @@ const Legend = ({ filters, setFilters }) => (
             <input
               type="checkbox"
               checked={value}
-              onChange={() => setFilters(prev => ({...prev, [key]: !prev[key], All: false}))}
+              onChange={() => setFilters(prev => ({ ...prev, [key]: !prev[key], All: false }))}
               className="mr-2"
             />
             <div className="flex items-center justify-between w-full">
@@ -318,6 +317,8 @@ const App = () => {
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
   const [showMemberSelection, setShowMemberSelection] = useState(false);
   const navigate = useNavigate();
+  const [activeAlert, setActiveAlert] = useState(null);
+  const [showTeamSelection, setShowTeamSelection] = useState(false);
 
   // Récupération des alertes
   useEffect(() => {
@@ -434,41 +435,97 @@ const App = () => {
     }
   }, [searchQuery, filteredAlerts, position]);
 
-  // Gestion des actions sur les alertes
+  // 2. Modifiez la fonction handleSendHelp
   const handleSendHelp = (alertId) => {
-    setShowMemberSelection(true);
+    setActiveAlert(alertId);
+    setShowTeamSelection(true);
     fetchAvailableMembers();
   };
 
-// Ajout d'un useEffect pour vérifier le localStorage au chargement
-useEffect(() => {
-  const savedAlertStates = localStorage.getItem('alertStates');
-  if (savedAlertStates) {
-    setAlertStates(JSON.parse(savedAlertStates));
-  }
-}, []);
-
-// Modification de handleFinalSend
-const handleFinalSend = (alertId) => {
-  if (!selectedMember) return;
-  
-  const newAlertStates = {
-    ...alertStates,
-    [alertId]: { loading: true }
-  };
-  setAlertStates(newAlertStates);
-
-  setTimeout(() => {
-    const finalState = {
-      ...alertStates,
-      [alertId]: { loading: false, isBack: true }
-    };
-    setAlertStates(finalState);
-    localStorage.setItem('alertStates', JSON.stringify(finalState));
-    setShowMemberSelection(false);
+  // 3. Ajoutez cette fonction pour gérer la fermeture du popup
+  const handlePopupClose = () => {
+    setActiveAlert(null);
+    setShowTeamSelection(false);
     setSelectedMember(null);
-  }, 2000);
-};
+  };
+
+
+  // Ajout d'un useEffect pour vérifier le localStorage au chargement
+  useEffect(() => {
+    const savedAlertStates = localStorage.getItem('alertStates');
+    if (savedAlertStates) {
+      setAlertStates(JSON.parse(savedAlertStates));
+    }
+  }, []);
+
+  const handleFinalSend = async (alertId) => {
+    if (!selectedMember) return;
+
+    const newAlertStates = {
+      ...alertStates,
+      [alertId]: { loading: true }
+    };
+    setAlertStates(newAlertStates);
+
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(`${BASE_URL}/intervention/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          alertId: alertId,
+          rescueMemberId: selectedMember.id
+        })
+      });
+
+      if (response.status === 201) {
+        const finalState = {
+          ...alertStates,
+          [alertId]: { loading: false, isBack: true }
+        };
+        setAlertStates(finalState);
+        localStorage.setItem('alertStates', JSON.stringify(finalState));
+
+        // Reset les états de sélection
+        setShowTeamSelection(false);
+        setSelectedMember(null);
+
+        // Optionnel : fermer le popup après un délai
+        setTimeout(() => {
+          setActiveAlert(null);
+        }, 1000);
+
+      } else {
+        // En cas d'erreur de réponse
+        const errorData = await response.json();
+        console.error("Erreur lors de la création de l'intervention:", errorData);
+
+        // Réinitialiser l'état de chargement
+        const errorState = {
+          ...alertStates,
+          [alertId]: { loading: false, isBack: false }
+        };
+        setAlertStates(errorState);
+
+        // Vous pouvez ajouter ici une notification d'erreur pour l'utilisateur
+        // Par exemple avec un toast ou une alerte
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de l\'équipe:', error);
+
+      // Réinitialiser l'état de chargement en cas d'erreur
+      const errorState = {
+        ...alertStates,
+        [alertId]: { loading: false, isBack: false }
+      };
+      setAlertStates(errorState);
+
+      // Vous pouvez ajouter ici une notification d'erreur pour l'utilisateur
+    }
+  };
 
   const handleFollowTeam = (alertId) => {
     navigate(`/maps/follow-team/${alertId}`);
@@ -488,7 +545,7 @@ const handleFinalSend = (alertId) => {
         className="h-full w-full"
       >
         <LocationMarker setPosition={setPosition} />
-        
+
         <LayersControl position="topright">
           <BaseLayer checked name="OpenStreetMap">
             <TileLayer
@@ -532,6 +589,7 @@ const handleFinalSend = (alertId) => {
           const alertColor = getColorByType(alert.type);
           const isBack = alertStates[alert.id]?.isBack || false;
           const isLoading = alertStates[alert.id]?.loading || false;
+          const isActive = activeAlert === alert.id;
 
           return (
             <Marker
@@ -539,9 +597,13 @@ const handleFinalSend = (alertId) => {
               position={[alert.lat, alert.lon]}
               icon={getIcon(alert.type)}
             >
-              <Popup>
+              <Popup
+                closeButton={true}
+                onClose={handlePopupClose}
+                className="custom-popup"
+              >
                 {!isBack ? (
-                  showMemberSelection ? (
+                  isActive && showTeamSelection ? (
                     <MemberSelectionPopup
                       members={availableMembers}
                       selectedMember={selectedMember}
