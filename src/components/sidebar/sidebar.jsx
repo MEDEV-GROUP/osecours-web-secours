@@ -10,7 +10,7 @@ import {
   MdPeople,
   MdOutlinePeople,
 } from "react-icons/md";
-import { AiOutlineMessage, AiFillMessage } from "react-icons/ai";
+//import { AiOutlineMessage, AiFillMessage } from "react-icons/ai";
 import { HiOutlineBell, HiBell } from "react-icons/hi";
 import UserProfile from "./profile";
 import Header from "./Header";
@@ -19,7 +19,7 @@ const Sidebar = ({ isCollapsed = false, isMobile, setMobileMenuOpen, isMobileOpe
   const menuItems = [
     { icon: { active: <MdDashboard />, inactive: <MdOutlineDashboard /> }, label: "Tableau de bord", link: "/tableau-de-bord" },
     { icon: { active: <MdMap />, inactive: <MdOutlineMap /> }, label: "Carte interactive", link: "/maps" },
-    { icon: { active: <MdReport />, inactive: <MdOutlineReport /> }, label: "Reporting & Statistiques", link: "/reports" },
+    { icon: { active: <MdReport />, inactive: <MdOutlineReport /> }, label: "Reporting & Statistiques", link: "/statistiques" },
     { icon: { active: <HiBell />, inactive: <HiOutlineBell /> }, label: "Alertes émises", link: "/alertes-emises" },
    // { icon: { active: <AiFillMessage />, inactive: <AiOutlineMessage /> }, label: "Messages", link: "/messages" },
     { icon: { active: <MdPeople />, inactive: <MdOutlinePeople /> }, label: "Nos Opérateurs Terrains", link: "/operateurs" },

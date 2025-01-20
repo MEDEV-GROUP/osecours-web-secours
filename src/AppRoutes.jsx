@@ -11,6 +11,7 @@ import ProtectedRoute from './context/ProtectedRoute';
 import NotFoundPage from "./pages/NotFoundPage";
 import AlertTable from "./pages/alertes/alertePage";
 import CreateAlertePage from "./pages/alertes/createAlerte";
+import StatistiquePage from "./pages/ReportPage";
 
 const AppRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AppRoutes = () => {
         {/* Routes avec layout */}
         <Route element={<Layout />}>
           <Route path="tableau-de-bord" element={<Dashboard />} />
+          <Route path="statistiques" element={<StatistiquePage />} />
           <Route path="secours-terrain" element={<Helpers />} />
           <Route path="maps" element={<Maps />} />
           <Route path="operateurs">

@@ -87,7 +87,7 @@ const Layout = () => {
           className={
             isLoginPage
               ? "w-full h-screen flex justify-center items-center"
-              : "bg-gray-100 p-8 h-screen"
+              : "bg-gray-100 p-8 h-s"
           }
         ><CustomBreadcrumb />
           <Outlet />
