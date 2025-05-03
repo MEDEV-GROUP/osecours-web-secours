@@ -1,5 +1,4 @@
 // src/AppRoutes.jsx
-// src/AppRoutes.jsx
 import { Routes, Route } from "react-router-dom";
 import Layout from './components/sidebar/Layout';
 import Dashboard from "./pages/DashboardPage";
@@ -13,7 +12,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 import AlertTable from "./pages/alertes/alertePage";
 import CreateAlertePage from "./pages/alertes/createAlerte";
 import StatistiquePage from "./pages/ReportPage";
-import FollowTeamMap from "./components/FollowTeamMap"; 
+import FollowTeamMap from "./components/FollowTeamMap";
+// Import de la nouvelle page d'interventions
+import InterventionsPage from "./pages/interventions/InterventionsPage";
 
 const AppRoutes = () => {
   return (
@@ -29,7 +30,6 @@ const AppRoutes = () => {
           <Route path="statistiques" element={<StatistiquePage />} />
           <Route path="secours-terrain" element={<Helpers />} />
           <Route path="maps" element={<Maps />} />
-           {/* Nouvelle page de suivi : /follow-team/:alertId */}
           <Route path="/maps/follow-team/:alertId" element={<FollowTeamMap />} />
           <Route path="operateurs">
             <Route index element={<OperatorsPage />} />
@@ -38,6 +38,12 @@ const AppRoutes = () => {
           <Route path="alertes-emises">
             <Route index element={<AlertTable />} />
             <Route path="creer-une-alerte" element={<CreateAlertePage />} />
+          </Route>
+          {/* Nouvelles routes pour les interventions */}
+          <Route path="interventions">
+            <Route index element={<InterventionsPage />} />
+            {/* Nous pourrions ajouter une route pour les détails d'une intervention plus tard */}
+            {/* <Route path=":id" element={<InterventionDetailsPage />} /> */}
           </Route>
         </Route>
 
