@@ -39,6 +39,7 @@ const useAlerts = () => {
     }, []);
 
     // Récupérer les alertes depuis l'API
+    // Dans le hook useAlerts.js, modifiez la fonction fetchAlerts:
     const fetchAlerts = useCallback(async () => {
         try {
             setLoading(true);
@@ -56,28 +57,32 @@ const useAlerts = () => {
                 },
             });
 
-            if (response.ok && response.data?.data?.data) {
-                const formattedAlerts = response.data.data.data.map((alert) => ({
+            // Correction: vérifiez response.data.data au lieu de response.ok
+            if (response.data && response.data.data && Array.isArray(response.data.data.data)) {
+                const alertsData = response.data.data.data;
+                console.log("Données d'alertes trouvées:", alertsData.length);
+
+                const formattedAlerts = alertsData.map((alert) => ({
                     id: alert.id,
                     type: alert.category,
                     lat: parseFloat(alert.location_lat),
                     lon: parseFloat(alert.location_lng),
                     description: alert.description,
-                    alerteurName: `${alert.reporter.first_name} ${alert.reporter.last_name}`,
-                    numero: alert.reporter.phone_number,
+                    alerteurName: alert.reporter ? `${alert.reporter.first_name || ''} ${alert.reporter.last_name || ''}`.trim() : 'Non spécifié',
+                    numero: alert.reporter?.phone_number || 'Non spécifié',
                     heureEmission: alert.createdAt,
                     heureEmissionFormatted: new Date(alert.createdAt).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                     }),
-                    media: alert.media,
-                    imageAlerteur: alert.reporter.photos.length > 0
+                    media: alert.media || [],
+                    imageAlerteur: alert.reporter?.photos?.length > 0
                         ? `${API_BASE_URL}/${alert.reporter.photos[0].photo_url}`
                         : "https://via.placeholder.com/100x100",
                 }));
 
+                console.log("Alertes formatées:", formattedAlerts);
                 setAlerts(formattedAlerts);
-                // Les alertes filtrées seront gérées par l'effet ci-dessous
             } else {
                 console.error("Format de données inattendu:", response.data);
                 setError("Format de données incorrect");
