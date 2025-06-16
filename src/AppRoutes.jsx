@@ -15,6 +15,7 @@ import StatistiquePage from "./pages/ReportPage";
 import FollowTeamMap from "./components/FollowTeamMap";
 // Import de la nouvelle page d'interventions
 import InterventionsPage from "./pages/interventions/InterventionsPage";
+import InterventionDetailsPage from "./pages/interventions/InterventionDetailsPage";
 
 const AppRoutes = () => {
   return (
@@ -42,8 +43,7 @@ const AppRoutes = () => {
           {/* Nouvelles routes pour les interventions */}
           <Route path="interventions">
             <Route index element={<InterventionsPage />} />
-            {/* Nous pourrions ajouter une route pour les détails d'une intervention plus tard */}
-            {/* <Route path=":id" element={<InterventionDetailsPage />} /> */}
+            <Route path=":id" element={<InterventionDetailsPage />} />
           </Route>
         </Route>
 

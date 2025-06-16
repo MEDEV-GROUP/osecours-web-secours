@@ -84,11 +84,10 @@ const Layout = () => {
 
 
         <main
-          className={`${
-            isLoginPage
+          className={`${isLoginPage
               ? "w-full h-[100vh] flex justify-center items-center"
-              : "bg-gray-100 p-8 h-[100vh]"
-          }`}
+              : "bg-gray-100 p-8 min-h-[100vh]"  // Changement de h- à min-h-
+            }`}
         >
           {!isMapPage && !isFollowMapPage &&<CustomBreadcrumb />}
           <Outlet />

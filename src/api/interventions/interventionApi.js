@@ -51,7 +51,7 @@ export const getInterventionById = async (id) => {
     }
 
     try {
-        const response = await axios.get(`${API_BASE_URL}/intervention/${id}`, {
+        const response = await axios.get(`${API_BASE_URL}/intervention/details/${id}`, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
                 'Content-Type': 'application/json',
